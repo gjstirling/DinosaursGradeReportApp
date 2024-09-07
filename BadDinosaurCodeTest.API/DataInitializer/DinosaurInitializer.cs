@@ -23,13 +23,52 @@ public class DinosaurInitializer
                     var contextFactory = services.GetRequiredService<IDbContextFactory<DataContext>>();
                     using (var context = contextFactory.CreateDbContext())
                     {
-                        var dino = new Dinosaur
-                        {
-                            Id = 1,
-                            Name = "gary"
-                        };
+                        csv.Read();
+                        csv.ReadHeader();
 
-                        context?.Add(dino);
+                        while (csv.Read())
+                        {
+                            // Add to Dino table
+                            var dino = new Dinosaur
+                            {
+                                Name = csv.GetField("Dinosaur Name"),
+                                Type = csv.GetField("DinosaurType")
+                            };
+                            context?.Add(dino);
+
+                            // Add to Class table (check for existing entries to avoid duplication)
+                            var classNumber = csv.GetField<int>("ClassNumber");
+                            var teacher = csv.GetField<string>("Teacher");
+                            
+                            var existingDinoClass = context?.DinoClass
+                                .FirstOrDefault(dc => dc.Id == classNumber && dc.Teacher == teacher);
+                            
+                            var dinoClass = new DinoClass
+                            {
+                                Id = classNumber,
+                                Teacher = teacher,
+                            };
+                            if (existingDinoClass == null) context?.Add(dinoClass);
+                            
+                            // Add scores to Scores table
+                            List<string> months = ["September", "October", "November"];
+                            
+                            foreach (var month in months)
+                            {
+                                var score = csv.GetField<int?>(month); 
+                                var result = new Scores
+                                {
+                                    Score = score,
+                                    Date = month,
+                                    DinoClass = dinoClass,
+                                    Dinosaur = dino
+                                };
+                                
+                                Console.WriteLine($"month:{result.Date} - Score:{result.Score} - :Student:{dino.Name} - Teacher:{dinoClass.Teacher}");
+                                
+                                //context?.Add(result);
+                            }
+                        }
                         context.SaveChanges();
                     }
                 }
