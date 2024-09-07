@@ -5,4 +5,5 @@ public class Dinosaur
     public string Name { get; set; }
     public string Type { get; set; }
     public ICollection<Scores> Scores { get; } = new List<Scores>();
+    public DinoClass DinoClass { get; set; } = null!;
 }

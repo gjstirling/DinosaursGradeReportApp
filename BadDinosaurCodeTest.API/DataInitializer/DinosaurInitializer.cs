@@ -28,40 +28,38 @@ public class DinosaurInitializer
 
                         while (csv.Read())
                         {
+                            // Adding classes
+                            var classNumber = csv.GetField<int?>("ClassNumber");
+                            var teacher = csv.GetField<string>("Teacher");
+                            var dinoClass = context.DinoClass
+                                                .Local
+                                                .FirstOrDefault(dc => dc.Id == classNumber && dc.Teacher == teacher) 
+                                            ?? context.DinoClass
+                                                .FirstOrDefault(dc => dc.Id == classNumber && dc.Teacher == teacher);
+
+                            if (dinoClass == null)
+                            {
+                                dinoClass = new DinoClass
+                                {
+                                    Id = classNumber.Value,
+                                    Teacher = teacher ?? "Unknown"
+                                };
+                                context.DinoClass.Add(dinoClass);
+                            }
+                            
                             // Add to Dino table
                             var dino = new Dinosaur
                             {
                                 Name = csv.GetField("Dinosaur Name"),
-                                Type = csv.GetField("DinosaurType")
+                                Type = csv.GetField("DinosaurType"), 
+                                DinoClass = dinoClass
                             };
-                            context?.Add(dino);
+                            context?.Dinosaurs.Add(dino);
                             
-                            // Adding classes
-                            var classNumber = csv.GetField<int?>("ClassNumber");
-                            var teacher = csv.GetField<string>("Teacher");
-                            
-                            if (classNumber.HasValue)
-                            {
-                                var dinoClass = context?.DinoClass
-                                                .Local.FirstOrDefault(dc => dc.Id == classNumber && dc.Teacher == teacher)
-                                            ?? context?.DinoClass
-                                                .FirstOrDefault(dc => dc.Id == classNumber && dc.Teacher == teacher); 
-    
-                                if (dinoClass == null)
-                                {
-                                    dinoClass = new DinoClass
-                                    {
-                                        Id = classNumber.Value, 
-                                        Teacher = teacher ?? "Unknown"  
-                                    };
-                                    context?.Add(dinoClass);
-                                }
-                            }
-                            
-                            // Add scores to Scores table
+                            // Add scores 
                             List<string> months = ["September", "October", "November", "December", "January", 
                                 "February", "March", "April", "May", "June", "July", "August"];
-                            
+
                             foreach (var month in months)
                             {
                                 var score = csv.GetField<int?>(month); 
@@ -72,8 +70,7 @@ public class DinosaurInitializer
                                     Dinosaur = dino
                                 };
                                 
-                                Console.WriteLine($"month:{result.Date} - Score:{result.Score} - :Student:{dino.Name}");
-                                
+                                //Console.WriteLine($"month:{result.Date} - Score:{result.Score} - :Student:{dino.Name}");
                                 context?.Add(result);
                             }
                         }
