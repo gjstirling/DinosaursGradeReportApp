@@ -35,20 +35,28 @@ public class DinosaurInitializer
                                 Type = csv.GetField("DinosaurType")
                             };
                             context?.Add(dino);
-
-                            // Add to Class table (check for existing entries to avoid duplication)
-                            // var classNumber = csv.GetField<int>("ClassNumber");
-                            // var teacher = csv.GetField<string>("Teacher");
-                            //
-                            // var existingDinoClass = context?.DinoClass
-                            //     .FirstOrDefault(dc => dc.Id == classNumber && dc.Teacher == teacher);
-                            //
-                            // var dinoClass = new DinoClass
-                            // {
-                            //     Id = classNumber,
-                            //     Teacher = teacher,
-                            // };
-                            // if (existingDinoClass == null) context?.Add(dinoClass);
+                            
+                            // Adding classes
+                            var classNumber = csv.GetField<int?>("ClassNumber");
+                            var teacher = csv.GetField<string>("Teacher");
+                            
+                            if (classNumber.HasValue)
+                            {
+                                var dinoClass = context?.DinoClass
+                                                .Local.FirstOrDefault(dc => dc.Id == classNumber && dc.Teacher == teacher)
+                                            ?? context?.DinoClass
+                                                .FirstOrDefault(dc => dc.Id == classNumber && dc.Teacher == teacher); 
+    
+                                if (dinoClass == null)
+                                {
+                                    dinoClass = new DinoClass
+                                    {
+                                        Id = classNumber.Value, 
+                                        Teacher = teacher ?? "Unknown"  
+                                    };
+                                    context?.Add(dinoClass);
+                                }
+                            }
                             
                             // Add scores to Scores table
                             List<string> months = ["September", "October", "November", "December", "January", 
