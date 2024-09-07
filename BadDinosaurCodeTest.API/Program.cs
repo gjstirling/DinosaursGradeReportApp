@@ -21,7 +21,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 CreateDbIfNotExists(app.Services);
-//DinosaurInitializer.Initialize(app.S);
+DinosaurInitializer.Initialize(app.Services);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

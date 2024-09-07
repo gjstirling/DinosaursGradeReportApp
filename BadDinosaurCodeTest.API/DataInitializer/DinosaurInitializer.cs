@@ -2,6 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Globalization;
+using BadDinosaurCodeTest.Data;
+using BadDinosaurCodeTest.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BadDinosaurCodeTest.API.DataInitializer;
 
@@ -15,7 +18,21 @@ public class DinosaurInitializer
         {
             using (var reader = new StreamReader(filePath))
             {
-                // Now, how do I get that CSV in here?
+                using (CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    var contextFactory = services.GetRequiredService<IDbContextFactory<DataContext>>();
+                    using (var context = contextFactory.CreateDbContext())
+                    {
+                        var dino = new Dinosaur
+                        {
+                            Id = 1,
+                            Name = "gary"
+                        };
+
+                        context?.Add(dino);
+                        context.SaveChanges();
+                    }
+                }
             }
         }
     }
