@@ -20,4 +20,6 @@ public class DataContext : DbContext
     }
 
     public DbSet<Dinosaur> Dinosaurs { get; set; }
+    public DbSet<DinoClass> DinoClass { get; set; }
+    public DbSet<Scores> Scores { get; set; }
 }
