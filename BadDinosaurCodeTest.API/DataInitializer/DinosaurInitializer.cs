@@ -37,21 +37,22 @@ public class DinosaurInitializer
                             context?.Add(dino);
 
                             // Add to Class table (check for existing entries to avoid duplication)
-                            var classNumber = csv.GetField<int>("ClassNumber");
-                            var teacher = csv.GetField<string>("Teacher");
-                            
-                            var existingDinoClass = context?.DinoClass
-                                .FirstOrDefault(dc => dc.Id == classNumber && dc.Teacher == teacher);
-                            
-                            var dinoClass = new DinoClass
-                            {
-                                Id = classNumber,
-                                Teacher = teacher,
-                            };
-                            if (existingDinoClass == null) context?.Add(dinoClass);
+                            // var classNumber = csv.GetField<int>("ClassNumber");
+                            // var teacher = csv.GetField<string>("Teacher");
+                            //
+                            // var existingDinoClass = context?.DinoClass
+                            //     .FirstOrDefault(dc => dc.Id == classNumber && dc.Teacher == teacher);
+                            //
+                            // var dinoClass = new DinoClass
+                            // {
+                            //     Id = classNumber,
+                            //     Teacher = teacher,
+                            // };
+                            // if (existingDinoClass == null) context?.Add(dinoClass);
                             
                             // Add scores to Scores table
-                            List<string> months = ["September", "October", "November"];
+                            List<string> months = ["September", "October", "November", "December", "January", 
+                                "February", "March", "April", "May", "June", "July", "August"];
                             
                             foreach (var month in months)
                             {
@@ -60,13 +61,12 @@ public class DinosaurInitializer
                                 {
                                     Score = score,
                                     Date = month,
-                                    DinoClass = dinoClass,
                                     Dinosaur = dino
                                 };
                                 
-                                Console.WriteLine($"month:{result.Date} - Score:{result.Score} - :Student:{dino.Name} - Teacher:{dinoClass.Teacher}");
+                                Console.WriteLine($"month:{result.Date} - Score:{result.Score} - :Student:{dino.Name}");
                                 
-                                //context?.Add(result);
+                                context?.Add(result);
                             }
                         }
                         context.SaveChanges();
