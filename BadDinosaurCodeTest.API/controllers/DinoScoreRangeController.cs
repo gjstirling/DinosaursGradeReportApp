@@ -16,9 +16,9 @@ namespace BadDinosaurCodeTest.API.controllers
         }
 
         [HttpGet]
-        public ActionResult<List<ClassWithGradeRangeDto>> Welcome()
+        public ActionResult<List<ClassWithGradeRangeDto>> GetRange([FromQuery] bool excludeMissedTests = false)
         {
-            var dinosaurs = DinoClassRepository.CollectScores(_services, false);
+            var dinosaurs = DinoClassRepository.CollectScores(_services, excludeMissedTests);
             var data = HighToLowScoreProcessor.Process(dinosaurs);
             
             return Ok(data);
