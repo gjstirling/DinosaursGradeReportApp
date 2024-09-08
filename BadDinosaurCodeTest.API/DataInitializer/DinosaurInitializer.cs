@@ -15,7 +15,7 @@ public class DinosaurInitializer
     public static void Initialize(IServiceProvider services) 
     {
         using (var scope = services.CreateScope())
-        {
+        { 
             using (var reader = new StreamReader(filePath))
             {
                 using (CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture))
@@ -28,7 +28,7 @@ public class DinosaurInitializer
 
                         while (csv.Read())
                         {
-                            // Adding classes
+                            // ADD CLASS DATA
                             var classNumber = csv.GetField<int?>("ClassNumber");
                             var teacher = csv.GetField<string>("Teacher");
                             var dinoClass = context.DinoClass
@@ -47,16 +47,16 @@ public class DinosaurInitializer
                                 context.DinoClass.Add(dinoClass);
                             }
                             
-                            // Add to Dino table
+                            // ADD DINO DATA
                             var dino = new Dinosaur
                             {
                                 Name = csv.GetField("Dinosaur Name"),
                                 Type = csv.GetField("DinosaurType"), 
                                 DinoClass = dinoClass
                             };
-                            context?.Dinosaurs.Add(dino);
+                         
                             
-                            // Add scores 
+                            // ADD SCORES
                             List<string> months = ["September", "October", "November", "December", "January", 
                                 "February", "March", "April", "May", "June", "July", "August"];
 
@@ -69,13 +69,13 @@ public class DinosaurInitializer
                                     Date = month,
                                     Dinosaur = dino
                                 };
-                                
-                                //Console.WriteLine($"month:{result.Date} - Score:{result.Score} - :Student:{dino.Name}");
                                 context?.Add(result);
                             }
+                            context?.Dinosaurs.Add(dino);
                         }
                         context.SaveChanges();
                     }
+                    
                 }
             }
         }
