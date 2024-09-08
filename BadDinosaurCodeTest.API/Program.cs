@@ -1,8 +1,6 @@
 using BadDinosaurCodeTest.API.DataInitializer;
 using BadDinosaurCodeTest.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using System.Drawing.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 

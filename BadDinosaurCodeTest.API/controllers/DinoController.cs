@@ -1,7 +1,7 @@
-using BadDinosaurCodeTest.Data;
+using BadDinosaurCodeTest.API.Processors;
+using BadDinosaurCodeTest.API.Repository;
 using BadDinosaurCodeTest.Data.Entity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BadDinosaurCodeTest.API.controllers
 
@@ -18,29 +18,18 @@ namespace BadDinosaurCodeTest.API.controllers
         }
 
         [HttpGet]
-        public ActionResult<string> GetDinosaurs([FromQuery] string? dinoName = null)
+        public ActionResult<List<Dinosaur>> GetDinosaurs([FromQuery] string? dinoName = null)
         {
-            var contextFactory = _services.GetRequiredService<IDbContextFactory<DataContext>>();
-            using (var context = contextFactory.CreateDbContext())
-            {
                 if (dinoName != null)
                 {
-                    var nameResult = context.Dinosaurs
-                        .Where(d => d.Name == dinoName)
-                        .Include(d => d.Scores)
-                        .ToList();
-                    
+                    var nameResult = DinoRepository.Find(_services, dinoName);
                     if (nameResult.Count == 0) return NotFound("No dino was found with the name " + dinoName);
-                
-                    return Ok(nameResult);
+                    var result = DinoProcessor.Process(nameResult);
+                    
+                    return Ok(result);
                 }
                 
-                var allDinos = context.Dinosaurs
-                    .Include(d => d.Scores)
-                    .ToList();
-                
-                return Ok(allDinos);
-            }
+                return BadRequest("Dino name needed to fetch data");
         }
     }
 }
