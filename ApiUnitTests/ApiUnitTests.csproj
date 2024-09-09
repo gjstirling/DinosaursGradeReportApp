@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BadDinosaurCodeTest.API\BadDinosaurCodeTest.API.csproj" />
+    <ProjectReference Include="..\BadDinosaurCodeTest.Data\BadDinosaurCodeTest.Data.csproj" />
   </ItemGroup>
 
 </Project>
