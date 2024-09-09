@@ -29,7 +29,7 @@ public class DinosaurInitializer
                         while (csv.Read())
                         {
                             // ADD CLASS DATA
-                            var classNumber = csv.GetField<int?>("ClassNumber");
+                            var classNumber = csv.GetField<int>("ClassNumber");
                             var teacher = csv.GetField<string>("Teacher");
                             var dinoClass = context.DinoClass
                                                 .Local
@@ -41,7 +41,7 @@ public class DinosaurInitializer
                             {
                                 dinoClass = new DinoClass
                                 {
-                                    Id = classNumber.Value,
+                                    Id = classNumber,
                                     Teacher = teacher ?? "Unknown"
                                 };
                                 context.DinoClass.Add(dinoClass);
@@ -50,11 +50,10 @@ public class DinosaurInitializer
                             // ADD DINO DATA
                             var dino = new Dinosaur
                             {
-                                Name = csv.GetField("Dinosaur Name"),
-                                Type = csv.GetField("DinosaurType"), 
+                                Name = csv.GetField("Dinosaur Name") ?? "Unknown",
+                                Type = csv.GetField("DinosaurType") ?? "Unknown", 
                                 DinoClass = dinoClass
                             };
-                         
                             
                             // ADD SCORES
                             List<string> months = ["September", "October", "November", "December", "January", 
@@ -73,9 +72,8 @@ public class DinosaurInitializer
                             }
                             context?.Dinosaurs.Add(dino);
                         }
-                        context.SaveChanges();
+                        context?.SaveChanges();
                     }
-                    
                 }
             }
         }

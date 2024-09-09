@@ -3,6 +3,18 @@ using Xunit;
 using BadDinosaurCodeTest.Data.Entity; 
 using BadDinosaurCodeTest.API.Processors; 
 
+using FluentAssertions;
+using Xunit;
+using BadDinosaurCodeTest.Data.Entity;
+using BadDinosaurCodeTest.API.Processors;
+using System.Collections.Generic;
+
+using FluentAssertions;
+using Xunit;
+using BadDinosaurCodeTest.Data.Entity;
+using BadDinosaurCodeTest.API.Processors;
+using System.Collections.Generic;
+
 namespace ApiUnitTests
 {
     public class DinoProcessorTests
@@ -15,22 +27,22 @@ namespace ApiUnitTests
                 new Dinosaur
                 {
                     Id = 1,
-                    Name = "Gary", 
-                    Type = "T Rex"
-        
-                },
-                new Dinosaur
-                {
-                    Id = 2,
-                    Name = "Barry",    
-                    Type = "Velociraptor"
+                    Name = "Gary",
+                    Type = "Tyrannosaurus Rex",
                 }
             };
+            dinosaurList[0].Scores.Add(new Scores { Date = "January", Score = 85 });
             
             var result = DinoProcessor.Process(dinosaurList);
-                        
-            Assert.NotNull(result);
-            Assert.Equal(2, result.Count);
+            
+            result.Should().NotBeNull();
+            result[0].Id.Should().Be(1);
+            result[0].Name.Should().Be("Gary");
+            result[0].Scores.Should().HaveCount(1);
+            result[0].Scores[0].Month.Should().Be("January");
+            result[0].Scores[0].Score.Should().Be(85);
         }
     }
 }
+
+
