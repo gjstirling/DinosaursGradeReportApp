@@ -3,14 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadDinosaurCodeTest.API", "BadDinosaurCodeTest.API\BadDinosaurCodeTest.API.csproj", "{937904E2-E404-45F5-B3A0-D5852B7C11A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.API", "School.API\School.API.csproj", "{937904E2-E404-45F5-B3A0-D5852B7C11A8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DE14D71A-4530-407F-8DDD-30457BC57C47}"
 	ProjectSection(SolutionItems) = preProject
 		Readme.MD = Readme.MD
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadDinosaurCodeTest.Data", "BadDinosaurCodeTest.Data\BadDinosaurCodeTest.Data.csproj", "{3EBBC0BB-DC17-4C70-A8EC-9B9662D4D71A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.Data", "School.Data\School.Data.csproj", "{3EBBC0BB-DC17-4C70-A8EC-9B9662D4D71A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.Shared", "School.Shared\School.Shared.csproj", "{1BF6BA98-B132-4758-9EC4-24E234AF6B90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +28,10 @@ Global
 		{3EBBC0BB-DC17-4C70-A8EC-9B9662D4D71A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EBBC0BB-DC17-4C70-A8EC-9B9662D4D71A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EBBC0BB-DC17-4C70-A8EC-9B9662D4D71A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BF6BA98-B132-4758-9EC4-24E234AF6B90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BF6BA98-B132-4758-9EC4-24E234AF6B90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BF6BA98-B132-4758-9EC4-24E234AF6B90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BF6BA98-B132-4758-9EC4-24E234AF6B90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

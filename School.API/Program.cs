@@ -1,6 +1,7 @@
-using BadDinosaurCodeTest.API.DataInitializer;
-using BadDinosaurCodeTest.Data;
 using Microsoft.EntityFrameworkCore;
+using School.API.DataInitializer;
+using School.API.Services;
+using School.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
     });
+builder.Services.AddScoped<IDinoService, DinoService>();
+builder.Services.AddScoped<IDinoClassService, DinoClassService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

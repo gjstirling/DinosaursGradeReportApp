@@ -1,4 +1,4 @@
-namespace BadDinosaurCodeTest.Data.Entity;
+namespace School.Data.Entity;
 
 public class Scores
 {

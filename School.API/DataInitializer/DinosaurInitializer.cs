@@ -2,11 +2,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Globalization;
-using BadDinosaurCodeTest.Data;
-using BadDinosaurCodeTest.Data.Entity;
+using School.Data;
+using School.Data.Entity;
 using Microsoft.EntityFrameworkCore;
 
-namespace BadDinosaurCodeTest.API.DataInitializer;
+namespace School.API.DataInitializer;
 
 public class DinosaurInitializer
 {
