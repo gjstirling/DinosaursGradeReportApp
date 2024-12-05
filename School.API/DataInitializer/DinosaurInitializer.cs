@@ -1,81 +1,133 @@
 ﻿using CsvHelper;
-using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using School.Data;
 using School.Data.Entity;
-using Microsoft.EntityFrameworkCore;
+using School.Shared.Enum;
 
 namespace School.API.DataInitializer;
-
 public class DinosaurInitializer
 {
     private static string filePath => Path.GetFullPath("wwwroot/dinosaurs.csv");
 
-    public static void Initialize(IServiceProvider services) 
+    private class DinoCsvItem
     {
-        using (var scope = services.CreateScope())
-        { 
-            using (var reader = new StreamReader(filePath))
+        public string DinosaurName { get; set; }
+        public string DinosaurType { get; set; }
+        public int ClassNumber { get; set; }
+        public string Teacher { get; set; }
+        public int? January { get; set; }
+        public int? February { get; set; }
+        public int? March { get; set; }
+        public int? April { get; set; }
+        public int? May { get; set; }
+        public int? June { get; set; }
+        public int? July { get; set; }
+        public int? August { get; set; }
+        public int? September { get; set; }
+        public int? October { get; set; }
+        public int? November { get; set; }
+        public int? December { get; set; }
+    }
+
+    private static List<Month> months;
+
+    public static async void Initialize(IServiceProvider services)
+    {
+        try
+        {
+            using var scope = services.CreateScope();
+
+            var contextFactory = services.GetRequiredService<IDbContextFactory<DataContext>>();
+
+            using var reader = new StreamReader(filePath);
+            using CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+
+            var csvItems = csv
+                    .GetRecords<DinoCsvItem>()
+                    .ToList();
+
+            using var context = contextFactory.CreateDbContext();
+
+            var classes = await context.DinoClass.ToListAsync();
+            var dinosaurs = await context.Dinosaurs
+                .Include(x => x.Scores)
+                .ToListAsync();
+
+            foreach (var item in csvItems)
             {
-                using (CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                // Update CLASS table based on Class Number - Using the class number property and not its id (primary key) 
+                var existingClass = classes.FirstOrDefault(x => x.Id == item.ClassNumber);
+
+                if (existingClass is null)
                 {
-                    var contextFactory = services.GetRequiredService<IDbContextFactory<DataContext>>();
-                    using (var context = contextFactory.CreateDbContext())
+                    existingClass = new DinoClass
                     {
-                        csv.Read();
-                        csv.ReadHeader();
+                        Number = item.ClassNumber,
+                        Teacher = item.Teacher
+                    };
 
-                        while (csv.Read())
+                    context.DinoClass.Add(existingClass);
+                    classes.Add(existingClass);
+                }
+
+                // Update DINO table based on Dinosaur Name
+                var existingDino = dinosaurs.FirstOrDefault(x => x.Name == item.DinosaurName);
+                if (existingDino is null)
+                {
+                    existingDino = new Dinosaur
+                    {
+                        Name = item.DinosaurName
+                    };
+
+                    existingDino.Type = item.DinosaurType;
+                    existingDino.DinoClass = existingClass;
+                    context.Dinosaurs.Add(existingDino);
+
+                }
+                // Assign a Class relationship to dinosaur
+                existingDino.DinoClass = existingClass;
+
+                // Update SCORES table 
+                foreach (Month month in Enum.GetValues(typeof(Month)))
+                {
+                    var scoreVal = month switch
+                    {
+                        Month.January => item.January,
+                        Month.February => item.February,
+                        Month.March => item.March,
+                        Month.April => item.April,
+                        Month.May => item.May,
+                        Month.June => item.June,
+                        Month.July => item.July,
+                        Month.August => item.August,
+                        Month.September => item.September,
+                        Month.October => item.October,
+                        Month.November => item.November,
+                        Month.December => item.December,
+                        _ => throw new NullReferenceException("Could not match month to score.")
+                    };
+
+                    var score = existingDino.Scores.FirstOrDefault(x => x.Month == month.ToString());
+
+                    if (score is null)
+                    {
+                        score = new Scores
                         {
-                            // ADD CLASS DATA
-                            var classNumber = csv.GetField<int>("ClassNumber");
-                            var teacher = csv.GetField<string>("Teacher");
-                            var dinoClass = context.DinoClass
-                                                .Local
-                                                .FirstOrDefault(dc => dc.Id == classNumber && dc.Teacher == teacher) 
-                                            ?? context.DinoClass
-                                                .FirstOrDefault(dc => dc.Id == classNumber && dc.Teacher == teacher);
-
-                            if (dinoClass == null)
-                            {
-                                dinoClass = new DinoClass
-                                {
-                                    Id = classNumber,
-                                    Teacher = teacher ?? "Unknown"
-                                };
-                                context.DinoClass.Add(dinoClass);
-                            }
-                            
-                            // ADD DINO DATA
-                            var dino = new Dinosaur
-                            {
-                                Name = csv.GetField("Dinosaur Name") ?? "Unknown",
-                                Type = csv.GetField("DinosaurType") ?? "Unknown", 
-                                DinoClass = dinoClass
-                            };
-                            
-                            // ADD SCORES
-                            List<string> months = ["September", "October", "November", "December", "January", 
-                                "February", "March", "April", "May", "June", "July", "August"];
-
-                            foreach (var month in months)
-                            {
-                                var score = csv.GetField<int?>(month); 
-                                var result = new Scores
-                                {
-                                    Score = score,
-                                    Date = month,
-                                    Dinosaur = dino
-                                };
-                                context?.Add(result);
-                            }
-                            context?.Dinosaurs.Add(dino);
-                        }
-                        context?.SaveChanges();
+                            Month = month.ToString(),
+                        };
+                        existingDino.Scores.Add(score);
                     }
+
+                    score.Score = scoreVal;
                 }
             }
+
+            await context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
         }
     }
-} 
+}

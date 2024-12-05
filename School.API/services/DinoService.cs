@@ -35,7 +35,7 @@ public class DinoService : IDinoService
                 Name = dino.Name,
                 Scores = dino.Scores.Select(score => new DinosaurScoresDto
                 {
-                    Month = score.Date.ToString(),
+                    Month = score.Month.ToString(),
                     Score = score.Score
                 }).ToList()
             }).ToList();
